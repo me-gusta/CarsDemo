@@ -11,6 +11,7 @@
     "@pixi/core": "^6.5.9",
     "@pixi/display": "^6.5.9",
     "@pixi/events": "^6.5.9",
+    "@pixi/filter-alpha": "^6.5.9",
     "@pixi/filter-blur": "^6.5.9",
     "@pixi/filter-glow": "^4.2.0",
     "@pixi/graphics": "^6.5.9",
@@ -28,6 +29,7 @@
     "@pixi/utils": "^6.5.9",
     "blowfish-resizer": "^0.0.14-alpha.1",
     "howler": "^2.2.3",
+    "npm": "^10.8.1",
     "three": "^0.152.2",
     "tween-es": "^1.0.0-alpha.2",
     "unzipit": "^1.4.0"

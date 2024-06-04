@@ -59,6 +59,11 @@ export default class ContainerChain extends Container {
         return this
     }
 
+    destroyChildren() {
+        this.children.forEach((el) => el.destroy())
+        return this
+    }
+
     pushChild(...children: Container<any>[]) {
         super.addChild(...children)
         return this

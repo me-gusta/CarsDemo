@@ -1,19 +1,19 @@
 import { Graphics } from '@pixi/graphics'
 import { createSprite } from 'src/utils/Utility'
 import ContainerChain from './Renderable'
+import { HEIGHT_PARKING_LINE, WIDTH_PARKING_LINE } from './math'
 
 export const createSpriteParkingLine = () => {
-    const heightParking = 300
     const container = new ContainerChain()
         .pushChild(
             new Graphics()
                 .beginFill(0xffffff)
-                .drawRect(0, 0, 8, heightParking),
+                .drawRect(-WIDTH_PARKING_LINE / 2, 0, WIDTH_PARKING_LINE, HEIGHT_PARKING_LINE),
         )
 
     const roundRect = createSprite('round_rect')
     roundRect.scale.set(0.5)
-    roundRect.position.set(-4, heightParking - 5)
+    roundRect.position.set(-WIDTH_PARKING_LINE, HEIGHT_PARKING_LINE - 5)
     container.addChild(roundRect)
 
     return container
