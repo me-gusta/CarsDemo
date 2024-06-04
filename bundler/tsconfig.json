@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "outDir": "outDir",
+        "noImplicitAny": true,
+        "allowJs": true,
+        "allowSyntheticDefaultImports": true,
+        "alwaysStrict": true,
+        "resolveJsonModule": true,
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "lib": [
+            "ES2021.String",
+        ]
+    },
+    "include": ["./**/*"]
+}

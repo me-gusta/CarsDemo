@@ -1,0 +1,38 @@
+{
+	"Pixi class component": {
+		"scope": "typescript, javascript",
+		"prefix": "pcc",
+		"body": [
+			"import { Container } from '@pixi/display'",
+			"",
+			"export default class ${1:$TM_FILENAME_BASE} extends Container {",
+			"\tconstructor() {",
+			"\t\tsuper()",
+			"\t}",
+			"}",
+			"",
+		],
+		"description": "Pixi class component"
+	},
+	"Blowfish resize construction": {
+		"scope": "typescript, javascript",
+		"prefix": "bf",
+		"body": [
+			"if (!this.blowfish) {",
+			"\tconst elements = {",
+			"\t}",
+			"\t// eslint-disable-next-line",
+			"\tconst config = {}",
+			"\tthis.blowfish = new Blowfish(this.constructor.name, elements, config, defaultParams, defaultFuncSetParams)",
+			"}",
+			"this.blowfish.Update(width, height)",
+		],
+		"description": "Blowfish resize construction"
+	},
+	"Fixed Log ts": {
+		"scope": "typescript",
+		"prefix": "log",
+		"body": ["console.log($0)"],
+		"description": "Log to console"
+	}
+}

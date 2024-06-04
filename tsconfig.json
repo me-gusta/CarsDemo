@@ -1,0 +1,27 @@
+{
+    "include": ["./src/**/*", "./assets/**/*"],
+    "exclude": ["./playable.config.js"],
+    "compilerOptions": {
+        "outDir": "./dist/",
+        "module": "ESNext",
+        "moduleResolution": "Node10",
+        "baseUrl": "./",
+        "target": "es6",
+        "paths": {
+            "assets/*": ["./assets/*"],
+            "src/*": ["./src/*"]
+        },
+        "lib": [
+            "DOM",
+            "ESNext"
+        ],
+        "sourceMap": true,
+        "strict": true,
+        "noImplicitAny": true,
+        "allowJs": true,
+        "allowSyntheticDefaultImports": true,
+        "alwaysStrict": true,
+        "experimentalDecorators": false,
+        "skipLibCheck": true
+    }
+}
