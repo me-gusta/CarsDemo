@@ -1,1 +1,0 @@
-export const range = (amount: number) => [...Array(amount).keys()]

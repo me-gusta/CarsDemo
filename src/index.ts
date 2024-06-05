@@ -14,6 +14,7 @@ const modules = {
     '2d': new App2d(Scene2d, {
         backgroundAlpha: 1,
         resolution: window.devicePixelRatio || 1,
+        antialias: true,
     }),
 }
 

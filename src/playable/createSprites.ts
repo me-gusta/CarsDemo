@@ -1,6 +1,6 @@
 import { Graphics } from '@pixi/graphics'
 import { createSprite } from 'src/utils/Utility'
-import ContainerChain from './Renderable'
+import ContainerChain from './lib/ContainerChain'
 import { HEIGHT_PARKING_LINE, WIDTH_PARKING_LINE } from './math'
 
 export const createSpriteParkingLine = () => {
@@ -25,3 +25,4 @@ export const createSpriteParkingSymbol = (color: number) => {
     sprite.anchor.set(0.5)
     return sprite
 }
+

@@ -1,14 +1,13 @@
-import { Container } from '@pixi/display'
-import { Graphics } from '@pixi/graphics'
-import ContainerChain from './Renderable'
+import { Container, DisplayObject } from '@pixi/display'
+import { Graphics, LINE_CAP, LINE_JOIN } from '@pixi/graphics'
+import ContainerChain from '../lib/ContainerChain'
 import { IPointData, Point } from '@pixi/math'
-import { WIDTH_PARKING_LINE, calculateDistance, findParallelPoints, isPointInRect } from './math'
+import { WIDTH_PARKING_LINE, calculateDistance, findParallelPoints, isPointInRect } from '../math'
 import { InteractionEvent } from '@pixi/interaction'
-import { EventEmitter } from '@pixi/utils'
-import FSM from './FSM'
+import FSM from '../lib/FSM'
 
 export default class DrawingSystem extends FSM {
-    private btnStart: ContainerChain
+    private btnStart: Container
     private btnEnd: ContainerChain
     private deadZone: ContainerChain
     private path: Graphics
@@ -16,21 +15,27 @@ export default class DrawingSystem extends FSM {
 
     public points: IPointData[] = []
 
-    constructor(layer: Container, layerGround: Container, color: number) {
+    constructor(
+        layer: Container,
+        layerGround: Container,
+        layerDeadZones: Container,
+        color: number,
+        car: Container,
+    ) {
         super()
 
-        this.btnStart = new ContainerChain()
+        this.deadZone = new ContainerChain()
             .setInteractive(true)
-            .setAlpha(0)
-            .addTo(layer)
+            .addTo(layerDeadZones)
+
+        this.btnStart = car
+        this.btnStart.interactive = true
+
+        this.btnStart.buttonMode = true
 
         this.btnEnd = new ContainerChain()
             .setInteractive(true)
             .setAlpha(0)
-            .addTo(layer)
-
-        this.deadZone = new ContainerChain()
-            .setInteractive(true)
             .addTo(layer)
 
         this.path = new Graphics()
@@ -45,11 +50,12 @@ export default class DrawingSystem extends FSM {
         const cb = () => {
             this.toStateDrawing()
         }
+        this.path.clear()
         this.btnStart.addListener('pointerdown', cb)
         this.enableState(
             'idle',
             () => {
-                this.btnStart.removeAllListeners()
+                this.btnStart.removeListener('pointerdown', cb)
             },
         )
     }
@@ -81,21 +87,16 @@ export default class DrawingSystem extends FSM {
             if (distance < radius / 2) return
 
             points.push(point)
-            const {
-                m1,
-                m2,
-                n1,
-                n2,
-            } = findParallelPoints(point, positionPrevious, radius / 4)
 
             positionPrevious.copyFrom(point)
 
-            this.path
-                .beginFill(0xffffff)
-                .drawPolygon([m1, m2, n1])
-                .drawPolygon([m2, n1, n2])
-                .drawCircle(positionPrevious.x, positionPrevious.y, radius / 4)
-                .endFill()
+            this.path.lineStyle({ width: 30, color: 0xffffff, cap: LINE_CAP.ROUND, join: LINE_JOIN.ROUND })
+            this.path.moveTo(points[0].x, points[0].y)
+
+            for (let i = 1; i < points.length; i++) {
+                const p = points[i]
+                this.path.lineTo(p.x, p.y)
+            }
 
             if (isPointInRect(this.btnEnd.getBounds(), data.global)) {
                 finish()
@@ -105,6 +106,7 @@ export default class DrawingSystem extends FSM {
         this.deadZone.addListener('pointerover', clearLine)
         this.layer.addListener('pointermove', addNewPoint)
         this.layer.addListener('pointerup', clearLine)
+        this.layer.addListener('pointerout', clearLine)
         this.btnEnd.addListener('pointerout', finish)
         this.enableState(
             'drawing',
@@ -112,6 +114,7 @@ export default class DrawingSystem extends FSM {
                 this.deadZone.removeListener('pointerover', clearLine)
                 this.layer.removeListener('pointermove', addNewPoint)
                 this.layer.removeListener('pointerup', clearLine)
+                this.layer.removeListener('pointerout', clearLine)
                 this.btnEnd.removeListener('pointerout', finish)
             },
         )
@@ -136,15 +139,6 @@ export default class DrawingSystem extends FSM {
         const widthBoxNarrow = widthParkingLot + pxMargin + WIDTH_PARKING_LINE
         const widthBoxBottom = widthScreen - btnStartPosition.x
 
-        this.btnStart
-            .destroyChildren()
-            .pushChild(
-                new Graphics()
-                    .beginFill(0xffffff)
-                    .drawCircle(0, 0, widthParkingLot / 4)
-                    .endFill(),
-            )
-            .setPositionPoint(btnStartPosition)
         this.btnEnd
             .destroyChildren()
             .pushChild(
@@ -182,4 +176,8 @@ export default class DrawingSystem extends FSM {
             )
             .setAlpha(0)
     }
+}
+
+class Entity {
+    components!: any[]
 }

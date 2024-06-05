@@ -1,11 +1,14 @@
 import { DisplayObject } from '@pixi/display'
 import { IPointData, Point } from '@pixi/math'
-import FSM from './FSM'
+import FSM from '../lib/FSM'
 import { Easing, Interpolation, Tween } from 'tween-es'
-import Vector from './vector'
+import Vector from '../lib/Vector'
+import { range } from '../lib/utils'
 
 export default class CarSystem extends FSM {
     private spriteCar
+    private pathX?: number[]
+    private pathY?: number[]
 
     constructor(spriteCar: DisplayObject) {
         super()
@@ -13,15 +16,18 @@ export default class CarSystem extends FSM {
     }
 
     toStateIdle() {
-
+        this.enableState('idle')
     }
 
     toStateProcess(path: IPointData[]) {
+        this.pathX = path.map((p) => p.x)
+        this.pathY = path.map((p) => p.y)
+
         const positionPrevious = new Point().copyFrom(this.spriteCar.position)
         const tween = new Tween(this.spriteCar.position)
             .to({
-                x: path.map((p) => p.x),
-                y: path.map((p) => p.y),
+                x: this.pathX,
+                y: this.pathY,
             }, 2000)
             .easing(Easing.linear)
             .interpolation(Interpolation.catmullRom)
@@ -34,6 +40,7 @@ export default class CarSystem extends FSM {
                 this.spriteCar.rotation = Math.atan2(-velocity.x, velocity.y)
             })
             .start()
+            
         this.enableState(
             'process',
             () => {
@@ -68,4 +75,10 @@ export default class CarSystem extends FSM {
 
         this.enableState('finished')
     }
+
+    // resize(width: number, height: number) {
+    //     range(this.pathY?.length || 0).forEach((i) => {
+    //         if (this.pathY) this.pathY[i] += this.pathY[i]
+    //     })
+    // }
 }
