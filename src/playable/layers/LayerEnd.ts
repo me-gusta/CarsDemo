@@ -57,8 +57,8 @@ export default class LayerEnd extends ContainerChain {
                 .onUpdate((object) => {
                     this.fail.alpha = object.alpha
                 })
-                .onComplete(() => {
-                    // Audio.play()
+                .onStart(() => {
+                    Audio.playSound('woosh_sound')
                 }),
             new Tween({ alpha: 1 })
                 .to({ alpha: 0 }, 1200)

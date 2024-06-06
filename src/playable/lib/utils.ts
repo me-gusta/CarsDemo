@@ -16,6 +16,12 @@ type TweenBatch = {
 
 const isCommand = (obj: Tween<any> | TweenCommand): obj is TweenCommand => (<TweenCommand>obj).mode !== undefined
 
+const getExistingOnComplete = (tween: Tween<any>) => {
+    // @ts-ignore
+    const onComplete = tween._onCompleteCallback
+    return onComplete || (() => {})
+}
+
 // this function can be solved in O(n)
 export const chainTweens = (...objs: (Tween<any> | TweenCommand)[]) => {
     const batches: TweenBatch[] = []
@@ -38,11 +44,18 @@ export const chainTweens = (...objs: (Tween<any> | TweenCommand)[]) => {
             for (let j = 0; j < batch.tweens.length - 1; j++) {
                 const tween = batch.tweens[j]
                 const tweenNext = batch.tweens[j + 1]
-                tween.onComplete(() => tweenNext.start())
+                // @ts-ignore : decorate existing callback
+                const onComplete = getExistingOnComplete(tween)
+                tween.onComplete(() => {
+                    onComplete()
+                    tweenNext.start()
+                })
             }
             if (batchPrev) {
                 const lastTween = batchPrev.tweens[batchPrev.tweens.length - 1]
+                const onComplete = getExistingOnComplete(lastTween)
                 lastTween.onComplete(() => {
+                    onComplete()
                     batch.tweens[0].start()
                 })
             } else {
@@ -51,7 +64,9 @@ export const chainTweens = (...objs: (Tween<any> | TweenCommand)[]) => {
         } else if (batch.mode === 'parallel') {
             if (batchPrev) {
                 const lastTween = batchPrev.tweens[batchPrev.tweens.length - 1]
+                const onComplete = getExistingOnComplete(lastTween)
                 lastTween.onComplete(() => {
+                    onComplete()
                     batch.tweens.forEach((el) => {
                         el.start()
                     })
